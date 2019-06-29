@@ -1,23 +1,62 @@
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
-  PersepolisFirehose:
+  Firehose:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
-      DeliveryStreamName: PersepolisCollector
-      DeliveryStreamType: DirectPut
+      DeliveryStreamName: "PersepolisCollector"
+      DeliveryStreamType: "DirectPut"
+      RoleARN: Ref: FirehoseRole
       S3DestinationConfiguration: 
-        BucketARN: Ref: PersepolisCollector
+        BucketARN: Ref: "Collector"
         BufferingHints:
           IntervalInSeconds: 60
           SizeInMBs: 1
 
-  PersepolisFirehoseRole:
+  FirehoseRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: PersepolisFirehoseRole
-        
+      RoleName: "PersepolisFirehoseRole"
+      Policies:
+        PolicyName: "S3Policy"
+        PolicyDocument: Ref: "FirehosePolicy"
+
+
+  FirehosePolicy
+    Type: AWS::IAM::PolicyDocument
+    Properties:
+      PolicyName: "PersepolisFirehosePolicy"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: "Allow"
+          Action:
+          - "glue:GetTableVersions"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+          - "s3:AbortMultipartUpload"
+          - "s3:GetBucketLocation"
+          - "s3:GetObject"
+          - "s3:ListBucket"
+          - "s3:ListBucketMultipartUploads"
+          - "s3:PutObject"
+          Resource:
+          - Ref: "Collector"
+        - Effect: "Allow"
+          Action:
+          - "logs:PutLogEvents"
+          Resource:
+          - !Sub "arn:aws:logs:${AWS::Region}:${AWS::Region}:log-group:/aws/kinesisfirehose/${Firehose.DeliveryStreamName}:log-stream:*"
+        -Effect: "Allow"
+          Action:
+          - "kinesis:DescribeStream"
+          - "kinesis:GetShardIterator"
+          - "kinesis:GetRecords"
+          Resource: 
+          - !Sub "arn:aws:kinesis:${AWS::Region}:${AWS::Region}:stream/${Firehose.DeliveryStreamName}"
  
-  PersepolisCollector:
+
+  Collector:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: PersepolisCollector
+      BucketName: "PersepolisCollector"

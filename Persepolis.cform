@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  PersepolisFirehose:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: PersepolisCollector
+      DeliveryStreamType: DirectPut
+      S3DestinationConfiguration: 
+        BucketARN: Ref: PersepolisCollector
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+
+  PersepolisFirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: PersepolisFirehoseRole
+        
+ 
+  PersepolisCollector:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: PersepolisCollector

@@ -41,26 +41,26 @@ sudo echo '#source section
 
 <match nginx>
   @type kinesis_firehose
-  region us-west-1
+  region us-east-1
   delivery_stream_name PersepolisCollector
 </match>
 
 <match messages>
   @type kinesis_firehose
-  region us-west-1
+  region us-east-1
   delivery_stream_name PersepolisCollector
 </match>
 
 #filter section
 
 <filter **>
-	@type record_modifier
-	<record>
-		hostname "#{Socket.gethostname}"
-		tag ${tag}
-		timestamp ${Time.at(time).to_s}
-		ip "#{ENV[\'FOO\']}"
-	</record>
+  @type record_modifier
+    <record>
+      hostname "#{Socket.gethostname}"
+      tag ${tag}
+      timestamp ${Time.at(time).to_s}
+      ip "#{ENV['"'"'FOO'"'"']}"
+    </record>
 </filter>
 
 #defaults
@@ -92,6 +92,6 @@ sudo echo '#source section
   @id input_debug_agent
   bind 127.0.0.1
   port 24230
-</source>' > /etc/td-agent/td-agent.conf
+</source>' | sudo tee /etc/td-agent/td-agent.conf
 sudo systemctl start td-agent
 sudo systemctl enable td-agent

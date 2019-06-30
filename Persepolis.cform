@@ -47,6 +47,9 @@ Resources:
                   - "s3:PutObject"
                 Resource:
                   - !GetAtt "Collector.Arn"
+                  - !Sub
+                    - "${arn}/*"
+                    - { arn: !GetAtt Collector.Arn }
               - Effect: "Allow"
                 Action:
                   - "logs:PutLogEvents"

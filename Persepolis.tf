@@ -82,7 +82,7 @@ resource "aws_iam_role_policy" "persepolis_policy" {
         {
             "Effect": "Allow",
             "Action": "firehose:*",
-            "Resource": "arn:aws:firehose:*"
+            "Resource": "*"
         }
     ]
 }

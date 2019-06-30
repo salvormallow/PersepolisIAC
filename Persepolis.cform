@@ -58,6 +58,11 @@ Resources:
     Properties:
       BucketName: "persepolis-collector"
 
+  Configs:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "persepolis-configs"
+
 Outputs:
   deliverysreamARN:
     Description: The ARN of the firehose delivery stream

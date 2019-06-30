@@ -1,2 +1,4 @@
 
 \.terraform/plugins/windows_amd64/
+
+*.info

@@ -5,9 +5,10 @@ Resources:
     Properties:
       DeliveryStreamName: "PersepolisCollector"
       DeliveryStreamType: "DirectPut"
-      RoleARN: !Ref "FirehoseRole"
       S3DestinationConfiguration: 
-        BucketARN: !Ref "Collector"
+        BucketARN: !GetAtt "Collector.Arn"
+        RoleARN: !GetAtt "FirehoseRole.Arn"
+        CompressionFormat: "UNCOMPRESSED"
         BufferingHints:
           IntervalInSeconds: 60
           SizeInMBs: 1
@@ -45,12 +46,12 @@ Resources:
                   - "s3:ListBucketMultipartUploads"
                   - "s3:PutObject"
                 Resource:
-                  - !GetAtt Collector.Arn
+                  - !GetAtt "Collector.Arn"
               - Effect: "Allow"
                 Action:
                   - "logs:PutLogEvents"
                 Resource:
-                  - "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/kinesisfirehose/Persepolis:log-stream:*" 
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/kinesisfirehose/Persepolis:log-stream:*" 
 
   Collector:
     Type: AWS::S3::Bucket
